@@ -166,6 +166,11 @@ impl<T: NFSFileSystem + Send + Sync + 'static> NFSTcpListener<T> {
             mount_signal: None,
         })
     }
+
+    /// Configures RPC to send a different port than we are actually listening on, in the case of weird firewall routing.
+    pub fn with_fake_port(&mut self, port: u16) {
+        self.port = port;
+    }
 }
 
 #[async_trait]
