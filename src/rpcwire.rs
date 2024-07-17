@@ -115,16 +115,19 @@ async fn read_fragment(
 
 pub async fn write_fragment(
     socket: &mut tokio::net::TcpStream,
-    buf: &Vec<u8>,
+    mut buf: Vec<u8>,
 ) -> Result<(), anyhow::Error> {
     // TODO: split into many fragments
     assert!(buf.len() < (1 << 31));
     // set the last flag
     let fragment_header = buf.len() as u32 + (1 << 31);
     let header_buf = u32::to_be_bytes(fragment_header);
-    socket.write_all(&header_buf).await?;
-    trace!("Writing fragment length:{}", buf.len());
-    socket.write_all(buf).await?;
+    let buf_len = buf.len();
+    buf.extend([0u8; 4]);
+    buf.copy_within(0..buf_len, 4);
+    buf[..4].copy_from_slice(&header_buf);
+    trace!("Writing fragment length: 4+{}", buf_len);
+    socket.write_all(&buf).await?;
     Ok(())
 }
 

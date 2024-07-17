@@ -52,18 +52,13 @@ pub fn handle_portmap(
         return Ok(());
     }
     let prog = PortmapProgram::from_u32(call.proc).unwrap_or(PortmapProgram::INVALID);
-
-    let mut out: Vec<u8> = vec![];
+    
     match prog {
-        PortmapProgram::PMAPPROC_NULL => pmapproc_null(xid, input, &mut out)?,
-        PortmapProgram::PMAPPROC_GETPORT => pmapproc_getport(xid, input, &mut out, context)?,
+        PortmapProgram::PMAPPROC_NULL => pmapproc_null(xid, input, output)?,
+        PortmapProgram::PMAPPROC_GETPORT => pmapproc_getport(xid, input, output, context)?,
         _ => {
-            proc_unavail_reply_message(xid).serialize(&mut out)?;
+            proc_unavail_reply_message(xid).serialize(output)?;
         }
-    }
-    if !out.is_empty() {
-        output.write_all(&out)?;
-        output.flush()?;
     }
     Ok(())
 }
