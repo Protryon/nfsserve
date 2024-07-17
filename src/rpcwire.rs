@@ -4,8 +4,8 @@ use std::io::{Read, Write};
 use tracing::{error, trace, warn};
 
 use crate::context::RPCContext;
-use crate::rpc::*;
 use crate::xdr::*;
+use crate::{nlm, nlm_handlers, rpc::*};
 
 use crate::mount;
 use crate::mount_handlers;
@@ -52,6 +52,8 @@ async fn handle_rpc(
             portmap_handlers::handle_portmap(xid, call, input, output, &context)
         } else if call.prog == mount::PROGRAM {
             mount_handlers::handle_mount(xid, call, input, output, &context).await
+        } else if call.prog == nlm::PROGRAM {
+            nlm_handlers::handle_nlm(xid, call, input, output, &context)
         } else if call.prog == NFS_ACL_PROGRAM
             || call.prog == NFS_ID_MAP_PROGRAM
             || call.prog == NFS_METADATA_PROGRAM

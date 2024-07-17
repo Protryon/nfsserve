@@ -52,7 +52,7 @@ pub fn handle_portmap(
         return Ok(());
     }
     let prog = PortmapProgram::from_u32(call.proc).unwrap_or(PortmapProgram::INVALID);
-    
+
     match prog {
         PortmapProgram::PMAPPROC_NULL => pmapproc_null(xid, input, output)?,
         PortmapProgram::PMAPPROC_GETPORT => pmapproc_getport(xid, input, output, context)?,
